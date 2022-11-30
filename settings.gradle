@@ -22,5 +22,6 @@ dependencyResolutionManagement {
         maven { url "https://jitpack.io" }
     }
 }
+
 rootProject.name = "QQ"
 include ':app'

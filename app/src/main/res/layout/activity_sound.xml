@@ -51,7 +51,7 @@
         android:layout_height="0.5dp"
         android:background="#afafaf"
         android:layout_below="@+id/title"/>
-    <com.example.qq.CircleImageView
+    <com.example.qq.widget.CircleImageView
         android:id="@+id/disc"
         android:layout_width="280dp"
         android:layout_height="280dp"
@@ -59,7 +59,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
         android:src="@drawable/writehuanghuai" >
-    </com.example.qq.CircleImageView>
+    </com.example.qq.widget.CircleImageView>
     <ImageView
         android:id="@+id/needle"
         android:layout_width="120dp"

@@ -3,7 +3,8 @@
     <dbname value="Chat" />
     <version value="3" />
     <list>
-        <mapping class='com.example.qq.model.Chat'></mapping>
+        <mapping class="com.example.qq.db.model.User"/>
+        <mapping class='com.example.qq.db.model.ChatInfo' />
     </list>
 
 </litepal>

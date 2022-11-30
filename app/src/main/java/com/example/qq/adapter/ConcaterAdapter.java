@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qq.R;
-import com.example.qq.model.Concater;
+import com.example.qq.db.model.Concater;
 
 import java.util.List;
 

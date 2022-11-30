@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    tools:context=".Chat_list">
+    tools:context=".Fragment.ChatList_Fragment">
     <Button
         android:id="@+id/chat_btn"
         android:layout_width="match_parent"
@@ -69,6 +69,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="播放视频"
+        android:visibility="visible" />
+    <Button
+        android:id="@+id/btn_Peopleinfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="个人信息页面"
         android:visibility="visible" />
 
 </LinearLayout>

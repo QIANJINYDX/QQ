@@ -20,7 +20,35 @@
         android:theme="@style/Theme.QQ"
         tools:targetApi="31">
         <activity
-            android:name=".VideoActivity"
+            android:name=".activity.EditName"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".activity.PersonInfo"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".activity.Setting"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".activity.Info_Activity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".activity.VideoActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -30,7 +58,7 @@
         <service android:name=".Service.MusicService" />
 
         <activity
-            android:name=".SoundActivity"
+            android:name=".activity.SoundActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -38,34 +66,34 @@
         </activity>
 
         <provider
-            android:name=".MyContentProvider"
+            android:name=".Provider.MyContentProvider"
             android:authorities="com.example.qq.provider"
             android:enabled="true"
             android:exported="true" />
 
         <activity
-            android:name=".AddPeople"
+            android:name=".activity.AddPeople_Activity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ForgetActivity"
+            android:name=".activity.Forget_Activity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".RegActivity"
+            android:name=".activity.RegActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".activity.LoginActivity"
             android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
@@ -78,14 +106,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".chat"
+            android:name=".activity.Chat_Activity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
@@ -93,7 +121,7 @@
         </activity>
 
         <receiver
-            android:name=".ForceOfflineReceiver"
+            android:name=".Receiver.ForceOfflineReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.example.qq.ForceOfflineReceiver" />
