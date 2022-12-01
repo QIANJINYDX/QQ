@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.qq.db.AppSqliteHelper;
 import com.example.qq.db.model.Concater;
-import com.example.qq.model.User;
+import com.example.qq.db.model.User;
 
 import java.util.ArrayList;
 import java.util.List;

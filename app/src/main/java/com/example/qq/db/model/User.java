@@ -16,6 +16,8 @@ LitePal巨坑之一！下面的属性remember本可以设计为boolean值，但�
 public class User extends LitePalSupport implements Comparable<User> {
     private long id;
     private String name;
+    private String account;
+    private String phone;
     private String password;
     private Integer remember;
     private byte[] portrait;
@@ -23,6 +25,26 @@ public class User extends LitePalSupport implements Comparable<User> {
     private String gender;
     private String brithday;
     private List<Article> articleList = new ArrayList<>();
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     @Override
     public String toString() {

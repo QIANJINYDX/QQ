@@ -7,7 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.qq.db.AppSqliteHelper;
-import com.example.qq.model.User;
+import com.example.qq.db.model.User;
 
 public class UserDao {
     private AppSqliteHelper helper;

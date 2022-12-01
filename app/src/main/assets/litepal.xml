@@ -5,6 +5,9 @@
     <list>
         <mapping class="com.example.qq.db.model.User"/>
         <mapping class='com.example.qq.db.model.ChatInfo' />
+        <mapping class='com.example.qq.db.model.Article' />
+        <mapping class='com.example.qq.db.model.Concater' />
+        <mapping class='com.example.qq.db.model.Message' />
     </list>
 
 </litepal>

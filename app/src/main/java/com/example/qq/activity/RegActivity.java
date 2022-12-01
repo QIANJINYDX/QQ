@@ -1,5 +1,6 @@
 package com.example.qq.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -8,7 +9,13 @@ import android.widget.Toast;
 
 import com.example.qq.R;
 import com.example.qq.dao.UserDao;
-import com.example.qq.model.User;
+import com.example.qq.db.model.User;
+import com.example.qq.util.MD5;
+import com.example.qq.util.PhotoUtils;
+
+import org.litepal.LitePal;
+
+import java.util.List;
 
 public class RegActivity extends Base_Activity implements View.OnClickListener {
     private Button btn_save;
@@ -49,11 +56,11 @@ public class RegActivity extends Base_Activity implements View.OnClickListener {
         switch (id){
             case R.id.btn_save:
                 //获取输入框的内容
-                String account = et_account.getText().toString();
+                String name = et_account.getText().toString();
                 String password = et_password.getText().toString();
                 String password_cfm = et_password_cfm.getText().toString();
                 String phone = et_phone.getText().toString();
-                if(account.trim().length()==0)
+                if(name.trim().length()==0)
                 {
                     Toast.makeText(RegActivity.this,"账号不能为空", Toast.LENGTH_SHORT).show();
                     return;
@@ -74,16 +81,29 @@ public class RegActivity extends Base_Activity implements View.OnClickListener {
                     Toast.makeText(RegActivity.this,"手机号不能为空", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                //判断账号或手机是否存在
-                if(userDao.isExistByAccountAndPhone(account,phone))
+                password= MD5.md5(password);
+                List<User> users= LitePal.where("phone==?",phone).find(User.class);
+                Toast mToast = Toast.makeText(this, null, Toast.LENGTH_SHORT);
+                if(!users.isEmpty())
                 {
-                    Toast.makeText(RegActivity.this,"账号或手机已经存在，请重新输入", Toast.LENGTH_SHORT).show();
-                    return;
+                    mToast.setText("该手机号已进行注册");
+                    mToast.show();
                 }
-                User bean=new User(account,password,phone);
-//                LoginActivity.list.add(bean);
-                //添加到数据库中
-                userDao.insert(bean);
+                else
+                {
+                    User user = new User();
+                    user.setName(name);
+                    user.setPassword(password);
+                    //默认不记住密码，并设置默认头像
+                    user.setPortrait((new PhotoUtils()).file2byte(this ,"default_portrait.jpg"));
+                    user.setRemember(0);
+                    user.setPhone(phone);
+                    user.save();
+                    mToast.setText("注册成功");
+                    mToast.show();
+                    Intent intent = new Intent(RegActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
                 finish();
                 break;
             case R.id.btn_reset:

@@ -12,7 +12,11 @@ import android.widget.Toast;
 
 import com.example.qq.R;
 import com.example.qq.dao.UserDao;
-import com.example.qq.model.User;
+import com.example.qq.db.LoginUser;
+import com.example.qq.db.model.User;
+import com.example.qq.util.MD5;
+
+import org.litepal.LitePal;
 
 public class LoginActivity extends Base_Activity implements View.OnClickListener{
     private Button btn_login;
@@ -86,7 +90,8 @@ public class LoginActivity extends Base_Activity implements View.OnClickListener
                     Toast.makeText(LoginActivity.this,"密码不能为空", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                User user = userDao.login(account,password);
+                User user = LitePal.where("name=?",account).findFirst(User.class);
+
                 if(user==null)
                 {
                     //登录失败
@@ -95,7 +100,13 @@ public class LoginActivity extends Base_Activity implements View.OnClickListener
                 else
                 {
                     //登录成功,跳转到首页
-
+                    password= MD5.md5(password);
+                    if(user.checkPassword(password))
+                    {
+                        user.update(user.getId());
+                        //用户登入，存入LoginUser
+                        LoginUser.getInstance().login(user);
+                    }
                     //保存密码功能
                     editor=pref.edit();
                     if(cb_rememberPass.isChecked())
