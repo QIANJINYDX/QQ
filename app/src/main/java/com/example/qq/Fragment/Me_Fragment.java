@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.example.qq.R;
 import com.example.qq.activity.PersonInfo;
 import com.example.qq.activity.Setting;
+import com.example.qq.db.LoginUser;
+import com.example.qq.util.PhotoUtils;
 import com.example.qq.widget.RoundImageView;
 
 public class Me_Fragment extends Fragment implements View.OnClickListener{
@@ -23,6 +25,7 @@ public class Me_Fragment extends Fragment implements View.OnClickListener{
     private LinearLayout info;
     private TextView info_name,info_account;
     private RoundImageView portrait;
+    private LoginUser loginUser = LoginUser.getInstance();
     public Me_Fragment() {
         // Required empty public constructor
     }
@@ -35,10 +38,15 @@ public class Me_Fragment extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loginUser.reinit();
+        initInfo();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,8 +55,12 @@ public class Me_Fragment extends Fragment implements View.OnClickListener{
         info = (LinearLayout)view.findViewById(R.id.info);
         info_name = (TextView)view.findViewById(R.id.info_name);
         portrait = (RoundImageView)view.findViewById(R.id.portrait);
+
         info.setOnClickListener((View.OnClickListener) this);
         setting.setOnClickListener((View.OnClickListener) this);
+        //登录则初始化用户的信息
+        initInfo();
+
         return view;
     }
 
@@ -68,5 +80,9 @@ public class Me_Fragment extends Fragment implements View.OnClickListener{
             default:
                 break;
         }
+    }
+    private void initInfo(){
+        info_name.setText(loginUser.getName());
+        portrait.setImageBitmap((new PhotoUtils()).byte2bitmap(loginUser.getPortrait()));
     }
 }

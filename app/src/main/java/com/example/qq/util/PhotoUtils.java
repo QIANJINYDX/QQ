@@ -19,6 +19,7 @@ package com.example.qq.util;
  返回：imagePath
  **/
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ContentUris;
 import android.content.Context;
@@ -90,7 +91,8 @@ public class PhotoUtils {
         return imagePath;
     }
     //私有方法
-    private String getImagePath(Context context,Uri uri, String selection){
+    @SuppressLint("Range")
+    private String getImagePath(Context context, Uri uri, String selection){
         String path = null;
         //通过Uri和selection获取真实的图片路径
         Cursor cursor = context.getContentResolver().query(uri,null,selection,null,null);

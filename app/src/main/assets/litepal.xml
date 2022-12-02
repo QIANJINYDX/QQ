@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
-    <dbname value="Chat" />
-    <version value="3" />
+    <dbname value="QQ" />
+    <version value="4" />
     <list>
         <mapping class="com.example.qq.db.model.User"/>
         <mapping class='com.example.qq.db.model.ChatInfo' />

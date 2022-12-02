@@ -69,7 +69,16 @@
             android:name=".Provider.MyContentProvider"
             android:authorities="com.example.qq.provider"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.qq.android.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <activity
             android:name=".activity.AddPeople_Activity"

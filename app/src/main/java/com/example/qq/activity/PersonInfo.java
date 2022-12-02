@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.ContentUris;
@@ -136,6 +137,7 @@ public class PersonInfo extends AppCompatActivity implements View.OnClickListene
         ActivityCollector.removeActivity(this);
     }
 
+    @SuppressLint("NonConstantResourceId")
     public void onClick(View v){
         switch (v.getId()){
             //点击修改地区逻辑

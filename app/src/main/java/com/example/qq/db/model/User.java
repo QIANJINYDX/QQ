@@ -7,6 +7,7 @@ import org.litepal.LitePal;
 import org.litepal.crud.LitePalSupport;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -46,16 +47,21 @@ public class User extends LitePalSupport implements Comparable<User> {
         this.phone = phone;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", account='" + account + '\'' +
+                ", phone='" + phone + '\'' +
                 ", password='" + password + '\'' +
                 ", remember=" + remember +
+                ", portrait=" + Arrays.toString(portrait) +
                 ", region='" + region + '\'' +
                 ", gender='" + gender + '\'' +
                 ", brithday='" + brithday + '\'' +
+                ", articleList=" + articleList +
                 '}';
     }
 
