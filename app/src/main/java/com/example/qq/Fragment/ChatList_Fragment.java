@@ -1,16 +1,25 @@
 package com.example.qq.Fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.Debug;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +33,8 @@ import com.example.qq.R;
 import com.example.qq.activity.SoundActivity;
 import com.example.qq.activity.VideoActivity;
 import com.example.qq.activity.Chat_Activity;
+import com.example.qq.db.LoginUser;
+import com.example.qq.util.PhotoUtils;
 
 import java.util.HashMap;
 
@@ -34,6 +45,7 @@ import java.util.HashMap;
  */
 public class ChatList_Fragment extends Fragment {
     private String newId;
+    private PhotoUtils photoUtils = new PhotoUtils();
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
@@ -64,6 +76,24 @@ public class ChatList_Fragment extends Fragment {
 
         }
     }
+    private void createNotificationChannel(String channelId, String channelName, int importance) {
+        NotificationChannel notificationChannel = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannel = new NotificationChannel(channelId, channelName, importance);
+        }
+        NotificationManager notificationManager  = (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+    }
+    //创建一个message通道，名字为消息
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,6 +110,7 @@ public class ChatList_Fragment extends Fragment {
         Button btn_palysoundPoll = view.findViewById(R.id.btn_palysoundPoll);
         Button btn_playvideo = view.findViewById(R.id.btn_playvideo);
         Button btn_Peopleinfo=view.findViewById(R.id.btn_Peopleinfo);
+        Button btn_SendNotify=view.findViewById(R.id.btn_SendNotify);
         EditText et_name=view.findViewById(R.id.et_name);
         EditText et_phone=view.findViewById(R.id.et_phone);
 
@@ -197,6 +228,35 @@ public class ChatList_Fragment extends Fragment {
                 startActivity(intent);
             }
         });
+        //测试发送通知
+
+        btn_SendNotify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LoginUser loginUser = LoginUser.getInstance();
+                createNotificationChannel("message", "消息", NotificationManager.IMPORTANCE_HIGH);
+                Log.d("CHAT", "onClick: "+loginUser.toString());
+                sendNotification(loginUser.getName(),"聊天内容",loginUser);
+            }
+        });
         return view;
     }
+    private void sendNotification(String title, String content,LoginUser loginUser) {
+        Intent intent = new Intent(getActivity(), ChatList_Fragment.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), R.string.app_name, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity(), "message");
+        builder
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setTicker("提示消息")
+                .setWhen(System.currentTimeMillis())
+                .setLargeIcon( photoUtils.byte2bitmap(loginUser.getPortrait()))
+                .setContentTitle(title)
+                .setContentText(content);
+        Notification notification = builder.build();
+        NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notification);
+    }
+
 }

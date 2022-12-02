@@ -1,9 +1,11 @@
 package com.example.qq.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -71,6 +73,7 @@ public class LoginActivity extends Base_Activity implements View.OnClickListener
         super.onRestart();
 //        System.out.println(list);
     }
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         int id=v.getId();
@@ -100,30 +103,37 @@ public class LoginActivity extends Base_Activity implements View.OnClickListener
                 else
                 {
                     //登录成功,跳转到首页
+                    //防止保存成MD5加密之后的密码
+                    String savepassword=password;
                     password= MD5.md5(password);
                     if(user.checkPassword(password))
                     {
                         user.update(user.getId());
                         //用户登入，存入LoginUser
                         LoginUser.getInstance().login(user);
-                    }
-                    //保存密码功能
-                    editor=pref.edit();
-                    if(cb_rememberPass.isChecked())
-                    {
-                        editor.putBoolean("remember_password",true);
-                        editor.putString("account",account);
-                        editor.putString("password",password);
+                        //保存密码功能
+                        editor=pref.edit();
+                        if(cb_rememberPass.isChecked())
+                        {
+                            editor.putBoolean("remember_password",true);
+                            editor.putString("account",account);
+                            editor.putString("password",savepassword);
+                        }
+                        else
+                        {
+                            editor.clear();
+                        }
+                        editor.apply();
+
+                        //跳转首页
+                        intent.setClass(LoginActivity.this,MainActivity.class);
+                        startActivity(intent);
                     }
                     else
                     {
-                        editor.clear();
+                        Toast.makeText(LoginActivity.this,"密码错误", Toast.LENGTH_LONG).show();
                     }
-                    editor.apply();
 
-                    //跳转首页
-                    intent.setClass(LoginActivity.this,MainActivity.class);
-                    startActivity(intent);
                 }
                 break;
             case R.id.btn_reg:
