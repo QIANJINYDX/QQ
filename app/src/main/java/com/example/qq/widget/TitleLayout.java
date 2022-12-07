@@ -11,7 +11,9 @@ import android.widget.TextView;
 
 import com.example.qq.Collector.ActivityCollector;
 import com.example.qq.R;
+import com.example.qq.activity.AddPeople_Activity;
 import com.example.qq.activity.PersonInfo;
+import com.example.qq.activity.webview_activity;
 
 public class TitleLayout extends LinearLayout {
     private ImageView iv_backward;
@@ -27,11 +29,15 @@ public class TitleLayout extends LinearLayout {
             tv_forward.setText("保存");
             tv_title.setText("编辑资料");
         }
-//        if(ActivityCollector.getCurrentActivity().getClass().equals(EditName.class)){
-//            tv_forward.setText("完成");
-//            tv_title.setText("编辑昵称");
-//        }
-
+        if(ActivityCollector.getCurrentActivity().getClass().equals(webview_activity.class)){
+            tv_forward.setText("");
+            tv_title.setText("外部网页");
+        }
+        if(ActivityCollector.getCurrentActivity().getClass().equals(AddPeople_Activity.class))
+        {
+            tv_forward.setText("");
+            tv_title.setText("添加好友");
+        }
         //设置监听器
         //如果点击back则结束活动
         iv_backward.setOnClickListener(new OnClickListener() {

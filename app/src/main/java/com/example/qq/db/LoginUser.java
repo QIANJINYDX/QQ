@@ -7,6 +7,7 @@ import com.example.qq.db.model.User;
 
 import org.litepal.LitePal;
 
+import java.util.Arrays;
 import java.util.List;
 
 //使用饿汉模式实现单例的登录用户信息记录
@@ -21,7 +22,24 @@ public class LoginUser extends Application {
     private String region;
     private String gender;
     private String brithday;
+    private String account;
+    private String phone;
 
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     public static LoginUser getInstance(){
         return login_user;
@@ -55,6 +73,7 @@ public class LoginUser extends Application {
 
     public boolean login(User user) {
         _user = user;
+        login_user.account=user.getAccount();
         login_user.id = user.getId();
         login_user.name = user.getName();
         login_user.portrait = user.getPortrait();
@@ -85,10 +104,12 @@ public class LoginUser extends Application {
         return "LoginUser{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", portrait ='" + portrait + '\'' +
+                ", portrait=" + "Arrays.toString(portrait)" +
                 ", region='" + region + '\'' +
                 ", gender='" + gender + '\'' +
                 ", brithday='" + brithday + '\'' +
+                ", account='" + account + '\'' +
+                ", phone='" + phone + '\'' +
                 '}';
     }
 

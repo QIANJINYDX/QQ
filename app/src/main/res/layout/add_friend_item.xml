@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:layout_height="60dp">
+    <com.example.qq.widget.RoundImageView
+        android:id="@+id/rv_Avatar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="@dimen/padding_left_and_right"
+        android:layout_marginRight="15dp"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/default_header"/>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_weight="4"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="姓名：小小D"
+            android:textSize="16sp"
+            tools:layout_editor_absoluteX="93dp"
+            tools:layout_editor_absoluteY="1dp" />
+        <TextView
+            android:id="@+id/tv_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="账号：00000001"
+            android:textSize="14sp"
+            tools:layout_editor_absoluteX="93dp"
+            tools:layout_editor_absoluteY="28dp" />
+
+        <TextView
+            android:id="@+id/tv_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="手机号：19045121563"
+            android:textSize="14sp"
+            tools:layout_editor_absoluteX="93dp"
+            tools:layout_editor_absoluteY="28dp" />
+    </LinearLayout>
+    <Button
+        android:id="@+id/btn_add"
+        android:layout_width="0dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="15dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:text="添加" />
+
+</LinearLayout>

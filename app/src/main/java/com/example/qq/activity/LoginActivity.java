@@ -40,7 +40,6 @@ public class LoginActivity extends Base_Activity implements View.OnClickListener
         setContentView(R.layout.activity_login);
 
         pref= PreferenceManager.getDefaultSharedPreferences(this);
-//        list.add(new User("ydx","123456","13142485710"));
 
         btn_login=findViewById(R.id.btn_login);
         btn_login.setOnClickListener(this);
@@ -104,6 +103,7 @@ public class LoginActivity extends Base_Activity implements View.OnClickListener
                 {
                     //登录成功,跳转到首页
                     //防止保存成MD5加密之后的密码
+                    user.setAccount(account);
                     String savepassword=password;
                     password= MD5.md5(password);
                     if(user.checkPassword(password))

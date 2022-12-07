@@ -1,67 +1,45 @@
 package com.example.qq.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.annotation.Nullable;
 
 import com.example.qq.R;
 import com.example.qq.db.model.Concater;
 
 import java.util.List;
 
-public class ConcaterAdapter extends RecyclerView.Adapter<ConcaterAdapter.ConcaterViewHolder>{
-
-    private Context context;
-    private List<Concater> list;
-    public ConcaterAdapter(Context context, List<Concater> list)
-    {
-        this.context=context;
-        this.list=list;
+public class ConcaterAdapter extends ArrayAdapter<Concater> {
+    private final View.OnClickListener listener;
+    //resourceID指定ListView的布局方式
+    private int resourceID;
+    public ConcaterAdapter(@NonNull Context context, int resource, @NonNull List<Concater> objects, View.OnClickListener listener1) {
+        super(context, resource, objects);
+        resourceID=resource;
+        this.listener = listener1;
     }
+
     @NonNull
     @Override
-    public ConcaterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ConcaterViewHolder holder=new ConcaterViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recview_main,parent,false));
-        return holder;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ConcaterViewHolder holder, int position) {
-        Concater item = list.get(position);
-        holder.iv_pic.setImageResource(item.getPic()==0?R.mipmap.ic_launcher:item.getPic());
-        holder.tv_name.setText(item.getName());
-        holder.tv_phone.setText(item.getPhone());
-        holder.tv_time.setText(item.getTime());
-    }
-
-    @Override
-    public int getItemCount() {
-        if (list==null) return 0;
-        return list.size();
-    }
-
-    public void setList(List<Concater> list) {
-        this.list = list;
-    }
-
-    class ConcaterViewHolder extends RecyclerView.ViewHolder{
-
-        ImageView iv_pic;
-        TextView tv_name;
-        TextView tv_phone;
-        TextView tv_time;
-        public ConcaterViewHolder(@NonNull View itemView) {
-            super(itemView);
-            iv_pic=itemView.findViewById(R.id.iv_pic);
-            tv_name=itemView.findViewById(R.id.tv_name);
-            tv_phone=itemView.findViewById(R.id.tv_phone);
-            tv_time=itemView.findViewById(R.id.tv_time);
-        }
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        Concater concater=getItem(position);
+        @SuppressLint("ViewHolder") View view= LayoutInflater.from(getContext()).inflate(resourceID,null);
+        ImageView iv_pic=view.findViewById(R.id.iv_pic);
+        TextView tv_name=view.findViewById(R.id.tv_name);
+        TextView tv_phone=view.findViewById(R.id.tv_phone);
+        TextView tv_time=view.findViewById(R.id.tv_time);
+        iv_pic.setImageResource(concater.getPic()==0?R.mipmap.ic_launcher:concater.getPic());
+        tv_name.setText(concater.getName());
+        tv_phone.setText(concater.getPhone());
+        tv_time.setText(concater.getTime());
+        return view;
     }
 }

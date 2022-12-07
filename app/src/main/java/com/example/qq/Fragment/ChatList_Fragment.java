@@ -20,6 +20,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Debug;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,10 +34,25 @@ import com.example.qq.R;
 import com.example.qq.activity.SoundActivity;
 import com.example.qq.activity.VideoActivity;
 import com.example.qq.activity.Chat_Activity;
+import com.example.qq.activity.webview_activity;
+import com.example.qq.db.DBUtils;
 import com.example.qq.db.LoginUser;
 import com.example.qq.util.PhotoUtils;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -111,6 +127,8 @@ public class ChatList_Fragment extends Fragment {
         Button btn_playvideo = view.findViewById(R.id.btn_playvideo);
         Button btn_Peopleinfo=view.findViewById(R.id.btn_Peopleinfo);
         Button btn_SendNotify=view.findViewById(R.id.btn_SendNotify);
+        Button btn_TestMySQL=view.findViewById(R.id.btn_TestMySQL);
+        Button btn_WebView=view.findViewById(R.id.btn_WebView);
         EditText et_name=view.findViewById(R.id.et_name);
         EditText et_phone=view.findViewById(R.id.et_phone);
 
@@ -239,6 +257,23 @@ public class ChatList_Fragment extends Fragment {
                 sendNotification(loginUser.getName(),"聊天内容",loginUser);
             }
         });
+
+        //测试数据库
+        btn_TestMySQL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        //测试WebView
+        btn_WebView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(),webview_activity.class);
+                startActivity(intent);
+            }
+        });
         return view;
     }
     private void sendNotification(String title, String content,LoginUser loginUser) {
@@ -258,5 +293,28 @@ public class ChatList_Fragment extends Fragment {
         NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, notification);
     }
+    private void SendMessage(String url, final String userName, String passWord) throws IOException {
+        // Android 4.0 之后不能在主线程中请求HTTP请求
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                OkHttpClient client = new OkHttpClient();
+                FormBody.Builder formBuilder = new FormBody.Builder();
+                Request request = new Request.Builder().url(url).build();
+                Response response= null;
+                try {
+                    response = client.newCall(request).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
+                try {
+                    Log.d("CHAT", response.body().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+    }
 }

@@ -5,87 +5,105 @@
     android:orientation="vertical"
     android:layout_height="match_parent"
     tools:context=".Fragment.ChatList_Fragment">
-    <ListView
+    <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <Button
+                android:id="@+id/chat_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="进入聊天页面"
+                android:visibility="visible" />
 
-    </ListView>
-    <Button
-        android:id="@+id/chat_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="进入聊天页面"
-        android:visibility="visible" />
+            <Button
+                android:id="@+id/btn_forback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="强制下线"
+                android:visibility="visible" />
+            <EditText
+                android:id="@+id/et_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="请输入朋友名字"/>
+            <EditText
+                android:id="@+id/et_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="请输入朋友电话"/>
+            <Button
+                android:id="@+id/btn_add_friends"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="添加朋友"
+                android:visibility="visible" />
+            <Button
+                android:id="@+id/btn_query_friends"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="查询朋友"
+                android:visibility="visible" />
+            <Button
+                android:id="@+id/btn_update_friends"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="更新朋友"
+                android:visibility="visible" />
+            <Button
+                android:id="@+id/btn_delete_friends"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="删除朋友"
+                android:visibility="visible" />
+            <Button
+                android:id="@+id/btn_palysound"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="播放音乐页面"
+                android:visibility="visible" />
+            <Button
+                android:id="@+id/btn_palysoundPoll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="播放SoundPool音频"
+                android:visibility="visible" />
+            <Button
+                android:id="@+id/btn_playvideo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="播放视频"
+                android:visibility="visible" />
+            <Button
+                android:id="@+id/btn_Peopleinfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="个人信息页面"
+                android:visibility="visible" />
+            <Button
+                android:id="@+id/btn_SendNotify"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="发送通知"
+                android:visibility="visible" />
+            <Button
+                android:id="@+id/btn_TestMySQL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="数据库测试"
+                android:visibility="visible" />
+            <Button
+                android:id="@+id/btn_WebView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="WebView测试"
+                android:visibility="visible" />
+        </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_forback"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="强制下线"
-        android:visibility="visible" />
-    <EditText
-        android:id="@+id/et_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="请输入朋友名字"/>
-    <EditText
-        android:id="@+id/et_phone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="请输入朋友电话"/>
-    <Button
-        android:id="@+id/btn_add_friends"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="添加朋友"
-        android:visibility="visible" />
-    <Button
-        android:id="@+id/btn_query_friends"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="查询朋友"
-        android:visibility="visible" />
-    <Button
-        android:id="@+id/btn_update_friends"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="更新朋友"
-        android:visibility="visible" />
-    <Button
-        android:id="@+id/btn_delete_friends"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="删除朋友"
-        android:visibility="visible" />
-    <Button
-        android:id="@+id/btn_palysound"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="播放音乐页面"
-        android:visibility="visible" />
-    <Button
-        android:id="@+id/btn_palysoundPoll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="播放SoundPool音频"
-        android:visibility="visible" />
-    <Button
-        android:id="@+id/btn_playvideo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="播放视频"
-        android:visibility="visible" />
-    <Button
-        android:id="@+id/btn_Peopleinfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="个人信息页面"
-        android:visibility="visible" />
-    <Button
-        android:id="@+id/btn_SendNotify"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="发送通知"
-        android:visibility="visible" />
+    </ScrollView>
+
 
 </LinearLayout>

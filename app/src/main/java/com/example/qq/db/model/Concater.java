@@ -7,6 +7,15 @@ public class Concater {
     private String phone;
     private Integer pic;
     private String time;
+    private String number;
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
 
     public String getTime() {
         return time;
@@ -64,7 +73,9 @@ public class Concater {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
-                ", pic='" + pic + '\'' +
+                ", pic=" + pic +
+                ", time='" + time + '\'' +
+                ", number='" + number + '\'' +
                 '}';
     }
 }
