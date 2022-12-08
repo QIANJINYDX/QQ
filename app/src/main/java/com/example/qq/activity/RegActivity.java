@@ -4,22 +4,35 @@ package com.example.qq.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.example.qq.R;
 import com.example.qq.dao.UserDao;
 import com.example.qq.db.model.User;
+import com.example.qq.util.HttpUtil;
 import com.example.qq.util.MD5;
 import com.example.qq.util.PhotoUtils;
 
 import org.litepal.LitePal;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class RegActivity extends Base_Activity implements View.OnClickListener {
     private static String TAG="RegActivity";
@@ -31,7 +44,30 @@ public class RegActivity extends Base_Activity implements View.OnClickListener {
     private EditText et_password_cfm;
     private EditText et_phone;
 
+    private String ans;
     private UserDao userDao;
+
+    private final Handler uiHandler=new Handler()
+    {
+        @SuppressLint("HandlerLeak")
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what)
+            {
+                case 1:
+                    Toast.makeText(RegActivity.this,ans,Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "handleMessage: "+ans);
+                    if(ans.equals("注册成功"))
+                    {
+                        Log.d(TAG, "handleMessage: "+ans);
+                        Intent intent = new Intent(RegActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +91,32 @@ public class RegActivity extends Base_Activity implements View.OnClickListener {
         userDao=new UserDao(RegActivity.this);
     }
 
+    private void register(String name,String password,String password_cfm,String phone)
+    {
+        RequestBody formBody = new FormBody.Builder()
+                .add("name", name)
+                .add("password", password)
+                .add("password_cfm", password_cfm)
+                .add("phone", phone)
+                .build();
+        HttpUtil.sendOkHttpRequestPost("http://116.62.110.5:5000/register", formBody, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                ans=response.body().string();
+                Log.d(TAG, "onResponse: "+ans);
+                Message msg = new Message();
+                msg.what = 1;
+                uiHandler.sendMessage(msg);
+            }
+        });
+    }
+
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
@@ -66,54 +128,7 @@ public class RegActivity extends Base_Activity implements View.OnClickListener {
                 String password = et_password.getText().toString();
                 String password_cfm = et_password_cfm.getText().toString();
                 String phone = et_phone.getText().toString();
-                if(name.trim().length()==0)
-                {
-                    Toast.makeText(RegActivity.this,"账号不能为空", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(password.length()==0)
-                {
-                    Toast.makeText(RegActivity.this,"密码不能为空", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(!password.equals(password_cfm))
-                {
-                    Toast.makeText(RegActivity.this,"两次密码不一致", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if(phone.trim().length()==0)
-                {
-                    Toast.makeText(RegActivity.this,"手机号不能为空", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                password= MD5.md5(password);
-                List<User> users= LitePal.where("phone=?",phone).find(User.class);
-                Toast mToast = Toast.makeText(this, null, Toast.LENGTH_SHORT);
-                if(!users.isEmpty())
-                {
-                    mToast.setText("该手机号已进行注册");
-                    mToast.show();
-                }
-                else
-                {
-                    User user = new User();
-                    user.setName(name);
-                    user.setPassword(password);
-                    //默认不记住密码，并设置默认头像
-                    PhotoUtils photoUtils=new PhotoUtils();
-                    byte[] hand=photoUtils.file2byte(this, "default_portrait.jpg");
-                    Log.d(TAG, "onClick: "+ Arrays.toString(hand));
-                    user.setRemember(0);
-                    user.setPhone(phone);
-                    user.setPortrait(hand);
-                    user.save();
-                    mToast.setText("注册成功");
-                    mToast.show();
-                    Intent intent = new Intent(RegActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                }
-                finish();
+                register(name,password,password_cfm,phone);
                 break;
             case R.id.btn_reset:
                 et_account.setText("");
@@ -125,15 +140,4 @@ public class RegActivity extends Base_Activity implements View.OnClickListener {
                 break;
         }
     }
-//    public boolean isExistByAccountAndPhone(String account,String phone)
-//    {
-//        for (User item:LoginActivity.list)
-//        {
-//            if(item.getAccount().equals(account)||item.getPhone().equals(phone))
-//            {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 }

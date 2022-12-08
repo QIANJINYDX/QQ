@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.example.qq.Collector.ActivityCollector;
 import com.example.qq.widget.Msg;
 import com.example.qq.adapter.MsgAdapter;
 import com.example.qq.R;
@@ -30,8 +33,13 @@ public class Chat_Activity extends Base_Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-//        insertMsgs();
+        ActivityCollector.addActivity(this);
         initMsgs();
+        LinearLayout title=findViewById(R.id.tl_title);
+        TextView name=title.findViewById(R.id.tv_title);
+        name.setText(getIntent().getStringExtra("name"));
+        TextView info=title.findViewById(R.id.tv_forward);
+        info.setText("···");
         inputText=(EditText) findViewById(R.id.input_text);
         send=(Button) findViewById(R.id.send);
         msgRecyclerView=(RecyclerView) findViewById(R.id.msg_recycler_view);
@@ -63,6 +71,13 @@ public class Chat_Activity extends Base_Activity {
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
+    }
+
     private void insertMsgs()
     {
         ChatInfo chat=new ChatInfo();

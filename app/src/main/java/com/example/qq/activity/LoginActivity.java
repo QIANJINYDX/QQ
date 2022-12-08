@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -12,15 +14,29 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.example.qq.R;
 import com.example.qq.dao.UserDao;
 import com.example.qq.db.LoginUser;
 import com.example.qq.db.model.User;
+import com.example.qq.util.HttpUtil;
 import com.example.qq.util.MD5;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.litepal.LitePal;
 
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class LoginActivity extends Base_Activity implements View.OnClickListener{
+    private String TAG="LoginActivity";
     private Button btn_login;
     private Button btn_reg;
     private Button btn_forget;
@@ -32,6 +48,57 @@ public class LoginActivity extends Base_Activity implements View.OnClickListener
     private CheckBox cb_rememberPass;
 
     private UserDao userDao;
+    private String ans;
+
+    private final Handler uiHandler=new Handler()
+    {
+        @SuppressLint("HandlerLeak")
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what)
+            {
+                case 1:
+                    Log.d(TAG, "handleMessage: "+ans);
+                    if(ans.equals("账号不能为空")||ans.equals("密码不能为空")||ans.equals("账号或密码错误"))
+                    {
+                        Toast.makeText(LoginActivity.this,ans,Toast.LENGTH_LONG).show();
+                    }
+                    else
+                    {
+                        Log.d(TAG, "handleMessage: 登录成功");
+                        try {
+                            JSONObject jsans=new JSONObject(ans);
+                            User user=new User();
+                            Log.d(TAG, "handleMessage: "+jsans);
+                            user.setAccount(jsans.getString("account"));
+                            user.setGender(jsans.getString("gender"));
+                            user.setName(jsans.getString("name"));
+                            user.setPhone(jsans.getString("phone"));
+                            user.setPassword(jsans.getString("password"));
+                            LoginUser.getInstance().login(user);
+                            editor=pref.edit();
+                            if(cb_rememberPass.isChecked())
+                            {
+                                editor.putBoolean("remember_password",true);
+                                editor.putString("account",user.getAccount());
+                                editor.putString("password",user.getPassword());
+                            }
+                            else
+                            {
+                                editor.clear();
+                            }
+                            editor.apply();
+                            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                            startActivity(intent);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    break;
+            }
+        }
+    };
     //保存所有注册用户
 //    public static List<User> list=new ArrayList<>();
     @Override
@@ -66,6 +133,28 @@ public class LoginActivity extends Base_Activity implements View.OnClickListener
         }
         userDao=new UserDao(LoginActivity.this);
     }
+    private void login(String account,String password)
+    {
+        RequestBody formBody = new FormBody.Builder()
+                .add("account", account)
+                .add("password", password)
+                .build();
+        HttpUtil.sendOkHttpRequestPost("http://116.62.110.5:5000/login", formBody, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                ans=response.body().string();
+                Log.d(TAG, "onResponse: "+ans);
+                Message msg = new Message();
+                msg.what = 1;
+                uiHandler.sendMessage(msg);
+            }
+        });
+    }
 
     @Override
     protected void onRestart() {
@@ -81,60 +170,7 @@ public class LoginActivity extends Base_Activity implements View.OnClickListener
             case R.id.btn_login:
                 String account=et_account.getText().toString();
                 String password=et_password.getText().toString();
-                //判断数据合法性
-                if(account.trim().length()==0)
-                {
-                    Toast.makeText(LoginActivity.this,"账号不能为空", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(password.length()==0)
-                {
-                    Toast.makeText(LoginActivity.this,"密码不能为空", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                User user = LitePal.where("name=?",account).findFirst(User.class);
-
-                if(user==null)
-                {
-                    //登录失败
-                    Toast.makeText(LoginActivity.this,"账号或密码错误", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    //登录成功,跳转到首页
-                    //防止保存成MD5加密之后的密码
-                    user.setAccount(account);
-                    String savepassword=password;
-                    password= MD5.md5(password);
-                    if(user.checkPassword(password))
-                    {
-                        user.update(user.getId());
-                        //用户登入，存入LoginUser
-                        LoginUser.getInstance().login(user);
-                        //保存密码功能
-                        editor=pref.edit();
-                        if(cb_rememberPass.isChecked())
-                        {
-                            editor.putBoolean("remember_password",true);
-                            editor.putString("account",account);
-                            editor.putString("password",savepassword);
-                        }
-                        else
-                        {
-                            editor.clear();
-                        }
-                        editor.apply();
-
-                        //跳转首页
-                        intent.setClass(LoginActivity.this,MainActivity.class);
-                        startActivity(intent);
-                    }
-                    else
-                    {
-                        Toast.makeText(LoginActivity.this,"密码错误", Toast.LENGTH_LONG).show();
-                    }
-
-                }
+                login(account,password);
                 break;
             case R.id.btn_reg:
                 intent.setClass(LoginActivity.this,RegActivity.class);

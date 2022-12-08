@@ -14,12 +14,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.qq.R;
 import com.example.qq.activity.AddPeople_Activity;
+import com.example.qq.activity.Chat_Activity;
 import com.example.qq.adapter.ConcaterAdapter;
 import com.example.qq.dao.ConcaterDao;
 import com.example.qq.db.LoginUser;
@@ -87,7 +89,8 @@ public class Contact_Fragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println(concaterDao.queryAll());
+        friends.clear();
+        FindFriend(loginUser.getAccount());
         adapter.notifyDataSetChanged();
     }
 
@@ -156,7 +159,19 @@ public class Contact_Fragment extends Fragment implements View.OnClickListener {
         rec=view.findViewById(R.id.rec);
         rec.setAdapter(adapter);
         loginUser=LoginUser.getInstance();
-        FindFriend(loginUser.getAccount());
+
+        // 绑定点击事件
+
+        rec.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Concater concater=friends.get(position);
+                Intent intent =new Intent(getActivity(), Chat_Activity.class);
+                intent.putExtra("number",concater.getNumber());
+                intent.putExtra("name",concater.getName());
+                startActivity(intent);
+            }
+        });
 
         return view;
     }
