@@ -1,5 +1,7 @@
 package com.example.qq.adapter;
 
+import android.annotation.SuppressLint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,8 @@ import java.util.List;
 
 public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder> {
     private List<Msg> mMsgList;
+    private OnItemClickListener listener;
+
     static class ViewHolder extends RecyclerView.ViewHolder{
         LinearLayout leftLayout;
         LinearLayout rightLayout;
@@ -39,9 +43,11 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder> {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.msg_item,parent,false);
         return new ViewHolder(view);
     }
-
+    public void setOnItemClickListener(OnItemClickListener listenser) {
+        this.listener = listenser;
+    }
     @Override
-    public void onBindViewHolder(@NonNull MsgAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MsgAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Msg msg=mMsgList.get(position);
         if(msg.getType()==Msg.TYPE_RECEIVED)
         {
@@ -56,6 +62,15 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder> {
             holder.leftLayout.setVisibility(View.GONE);
             holder.rightMsg.setText(msg.getContent());
         }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(listener!=null)
+                {
+                    listener.onItemClick(position);
+                }
+            }
+        });
     }
 
     @Override

@@ -167,7 +167,7 @@ public class Contact_Fragment extends Fragment implements View.OnClickListener {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Concater concater=friends.get(position);
                 Intent intent =new Intent(getActivity(), Chat_Activity.class);
-                intent.putExtra("number",concater.getNumber());
+                intent.putExtra("account",concater.getNumber());
                 intent.putExtra("name",concater.getName());
                 startActivity(intent);
             }
