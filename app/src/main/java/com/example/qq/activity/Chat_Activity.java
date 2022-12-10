@@ -1,20 +1,37 @@
 package com.example.qq.activity;
 
+import static android.os.Environment.DIRECTORY_PICTURES;
 import static com.example.qq.util.JudgeURL.judge;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,38 +39,76 @@ import android.widget.Toast;
 import com.example.qq.Collector.ActivityCollector;
 import com.example.qq.adapter.OnItemClickListener;
 import com.example.qq.db.LoginUser;
+import com.example.qq.util.DownloadUtil;
+import com.example.qq.util.HttpCallbackListener;
+import com.example.qq.util.HttpDownFileUtils;
 import com.example.qq.util.HttpUtil;
+import com.example.qq.util.ImageUpload;
+import com.example.qq.util.KeyboardChangeListener;
+import com.example.qq.util.PhotoUtils;
 import com.example.qq.widget.Msg;
 import com.example.qq.adapter.MsgAdapter;
 import com.example.qq.R;
-import com.example.qq.db.model.ChatInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.litepal.LitePal;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Sink;
 
 
-public class Chat_Activity extends Base_Activity {
+public class Chat_Activity extends Base_Activity implements View.OnClickListener{
+    //变量定义
     private String TAG="聊天页面";
     private List<Msg> msgList=new ArrayList<>();
-    private EditText inputText;
-    private Button send;
-    private RecyclerView msgRecyclerView;
     private MsgAdapter adapter;
     private String friend_account;
     private LoginUser loginUser = LoginUser.getInstance();
+    private static final int TAKE_PHOTO = 1;
+    private static final int FROM_ALBUMS = 2;
+    private Uri imageUri;  //拍照功能的地址
+    private PhotoUtils photoUtils = new PhotoUtils();
+    private String imagePath;  //从相册中选的地址
+    private String file_paht;
+    //UI定义
+    private EditText inputText;
+    private ImageView iv_send;
+    private RecyclerView msgRecyclerView;
+    private ImageView iv_expand;
+    private ImageView iv_Expressions;
+    private LinearLayout ll_expend;
+    private LinearLayout ll_xiangce;
+    private LinearLayout ll_wenjian;
+    private LinearLayout ll_paishe;
+    private LinearLayout ll_weizhi;
+    private TextView tv_send;
+    private TextView tv_cancel;
+    // 申请权限的集合，同时要在AndroidManifest.xml中申请，Android 6以上需要动态申请权限
+    // 判断点击按钮
+    private boolean xiangce;
+    private boolean wenjian;
+    private boolean paishe;
+    String[] permissions = new String[]{
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET
+    };
+    List<String> mPermissionList = new ArrayList<>();
+    private File f;
     private final Handler uiHandler=new Handler()
     {
         @SuppressLint("HandlerLeak")
@@ -64,7 +119,55 @@ public class Chat_Activity extends Base_Activity {
             {
                 case 1:
                     adapter.notifyDataSetChanged();
+                    for (int i = 0; i < msgList.size(); i++) {
+                        Msg cur_msg=msgList.get(i);
+                        if(cur_msg.getStyle()==2)
+                        {
+                            Log.d(TAG, "handleMessage: 开始请求文件");
+                            String urlname="";
+                            char[] img_path=cur_msg.getImg_path().toCharArray();
+                            for (int j = img_path.length-1; j>=0; j--) {
+                                if(img_path[j]!='/')
+                                {
+                                    urlname=img_path[j]+urlname;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            Log.d(TAG, "ImgName:"+urlname);
+                            String url="http://116.62.110.5:5000/download/"+urlname;
+//                            Log.d(TAG, "onDownloadSuccess: 下载成功");
+//                            Log.d(TAG, "onDownloadSuccess: 下载失败");
+                            int finalI1 = i;
+                            HttpDownFileUtils.getInstance().downFileFromServiceToPublicDir(url,Chat_Activity.this,DIRECTORY_PICTURES,((status, object, proGress, currentDownProGress, totalProGress) -> {
+                                if(status==1)
+                                {
+                                    Log.d(TAG, "下载状态: 下载成功");
+                                }
+                                if (object instanceof File){
+                                    File file = (File) object;
+                                    Log.d(TAG, "handleMessage: "+file.getAbsolutePath());
+                                }else if (object instanceof Uri){
+                                    Uri uri = (Uri) object;
+                                    Log.d(TAG, "URL: "+uri);
+                                    cur_msg.setUri(uri);
+                                    msgList.set(finalI1,cur_msg);
+                                    Log.d(TAG, "MSGURI: "+msgList.get(finalI1).getUri());
+                                    Message message=new Message();
+                                    message.what=2;
+                                    uiHandler.sendMessage(message);
+                                }
+                            }));
+                        }
+                    }
+                    adapter.notifyDataSetChanged();
                     break;
+                case 2:
+                    adapter.notifyDataSetChanged();
+                    break;
+
             }
         }
     };
@@ -72,8 +175,12 @@ public class Chat_Activity extends Base_Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
         ActivityCollector.addActivity(this);
         loginUser=LoginUser.getInstance();
+        xiangce=false;
+        wenjian=false;
+        paishe=false;
         friend_account=getIntent().getStringExtra("account");
         LinearLayout title=findViewById(R.id.tl_title);
         TextView name=title.findViewById(R.id.tv_title);
@@ -82,7 +189,16 @@ public class Chat_Activity extends Base_Activity {
         TextView info=title.findViewById(R.id.tv_forward);
         info.setText("···");
         inputText=(EditText) findViewById(R.id.input_text);
-        send=(Button) findViewById(R.id.send);
+        iv_expand=findViewById(R.id.iv_expand);
+        iv_Expressions=findViewById(R.id.iv_Expressions);
+        ll_expend=findViewById(R.id.ll_expend);
+
+        ll_xiangce=findViewById(R.id.ll_xiangce);
+        ll_wenjian=findViewById(R.id.ll_wenjian);
+        ll_paishe=findViewById(R.id.ll_paishe);
+        ll_weizhi=findViewById(R.id.ll_weizhi);
+        iv_send=findViewById(R.id.iv_send);
+        ll_expend.setVisibility(View.GONE);
         msgRecyclerView=(RecyclerView) findViewById(R.id.msg_recycler_view);
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         msgRecyclerView.setLayoutManager(layoutManager);
@@ -92,36 +208,47 @@ public class Chat_Activity extends Base_Activity {
             public void onItemClick(int position) {
                 Log.d(TAG, "消息被点击了"+position);
                 //获取消息内容，判断消息中是否包含网页
-                String connect=msgList.get(position).getContent();
-                if(judge(connect))
+                //是文本类型消息
+                if (msgList.get(position).getStyle()==1)
                 {
-                    Intent intent=new Intent(Chat_Activity.this,webview_activity.class);
-                    intent.putExtra("url",connect);
-                    startActivity(intent);
+                    String connect=msgList.get(position).getContent();
+                    if(judge(connect))
+                    {
+                        Intent intent=new Intent(Chat_Activity.this,webview_activity.class);
+                        intent.putExtra("url",connect);
+                        startActivity(intent);
+                    }
                 }
-
             }
         });
         msgRecyclerView.setAdapter(adapter);
+        iv_send.setOnClickListener(this);
+        iv_expand.setOnClickListener(this);
 
-        //获取聊天数据
-        send.setOnClickListener(new View.OnClickListener() {
+        ll_xiangce.setOnClickListener(this);
+        ll_wenjian.setOnClickListener(this);
+        ll_paishe.setOnClickListener(this);
+        ll_weizhi.setOnClickListener(this);
+
+        KeyboardChangeListener mKeyboardChangeListener = new KeyboardChangeListener(this);
+        mKeyboardChangeListener.setKeyBoardListener(new KeyboardChangeListener.KeyBoardListener() {
             @Override
-            public void onClick(View v) {
-                String content=inputText.getText().toString();
-                if(!"".equals(content))
+            public void onKeyboardChange(boolean isShow, int keyboardHeight) {
+                if (isShow) {
+                    Log.d(TAG, "onKeyboardChange: 键盘升起");
+                    ll_expend.setVisibility(View.GONE);
+                    iv_expand.setVisibility(View.GONE);
+                    iv_send.setVisibility(View.VISIBLE);
+                }
+                else
                 {
-                    //添加入数据库
-                    SendMsg(loginUser.getAccount(),friend_account,content,"1");
-                    //将消息对象显示在页面
-                    Msg msg=new Msg(content,Msg.TYPE_SENT);
-                    msgList.add(msg);
-                    adapter.notifyItemInserted(msgList.size()-1);//当有新消息时，刷新ListView中的显示
-                    msgRecyclerView.scrollToPosition(msgList.size()-1);//将ListView定位到最后一行
-                    inputText.setText("");
+                    Log.d(TAG, "onKeyboardChange: 键盘落下");
+                    iv_expand.setVisibility(View.VISIBLE);
+                    iv_send.setVisibility(View.GONE);
                 }
             }
         });
+
     }
 
     @Override
@@ -146,14 +273,21 @@ public class Chat_Activity extends Base_Activity {
                 String ans=response.body().string();
                 try {
                     JSONArray jsonans=new JSONArray(ans);
+//                    Log.d(TAG, "onResponse: "+jsonans);
                     for (int i = 0; i < jsonans.length(); i++) {
                         JSONObject jsonObject=jsonans.getJSONObject(i);
+                        String style=jsonObject.getString("style");
                         int msgType=0;
                         if(friend_account.equals(jsonObject.getString("send_number")))
                         {
                             msgType=1;
                         }
                         Msg msg=new Msg(jsonObject.getString("content"),msgType);
+                        if(style.equals("2"))
+                        {
+                            msg.setImg_path(jsonObject.getString("image"));
+                        }
+                        msg.setStyle(Integer.parseInt(style));
                         msgList.add(msg);
                     }
                     Message message=new Message();
@@ -166,11 +300,11 @@ public class Chat_Activity extends Base_Activity {
             }
         });
     }
-    private void SendMsg(String send_number,String accept_number,String content,String msg_type)
+    private void SendMsg(String send_number, String accept_number, String content,String style)
     {
         RequestBody formBody = new FormBody.Builder()
                 .add("send_number", send_number)
-                .add("msg_type", msg_type)
+                .add("style", style)
                 .add("accept_number", accept_number)
                 .add("content", content)
                 .build();
@@ -189,5 +323,209 @@ public class Chat_Activity extends Base_Activity {
     }
     private void initMsgs() {
         getMsg(friend_account,loginUser.getAccount());
+    }
+    //判断文件是否存在
+    public boolean fileIsExists(String strFile) {
+        try {
+            f = new File(strFile);
+            if (!f.exists()) {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+    /*
+     * 弹出图片
+     */
+    private void showDialog(Context context, Bitmap bitmap){
+        Dialog dia = new Dialog(context, R.style.edit_AlertDialog_style);
+        dia.setContentView(R.layout.dialog);
+        ImageView imageView = (ImageView) dia.findViewById(R.id.ivdialog);
+        tv_send=dia.findViewById(R.id.tv_send);
+        tv_cancel=dia.findViewById(R.id.tv_cancel);
+        tv_send.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onClick(View v) {
+                dia.cancel();
+                Log.d(TAG, "onClick: "+"发送文件");
+                Msg msg=new Msg();
+                msg.setStyle(2);
+                msg.setBitmap(bitmap);
+                Log.d(TAG, "onClick: "+bitmap);
+                msg.setType(Msg.TYPE_SENT);
+                msgList.add(msg);
+                adapter.notifyDataSetChanged();
+                //将图片类型消息上传到数据库
+                mPermissionList.clear();
+                for (String permission : permissions) {
+                    if (ContextCompat.checkSelfPermission(Chat_Activity.this, permission) != PackageManager.PERMISSION_GRANTED) {
+                        mPermissionList.add(permission);
+                    }
+                }
+                if(mPermissionList.isEmpty())
+                {
+                    boolean fileExist=fileIsExists(imagePath);
+                    if(fileExist)
+                    {
+                        Log.d(TAG, "onClick: 开始上传");
+                        try {
+                            ImageUpload.run(f,loginUser.getAccount(),friend_account,"2");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+        tv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dia.cancel();
+            }
+        });
+        //可以set任何格式图片
+        imageView.setImageBitmap(bitmap);
+        dia.show();
+        //选择true的话点击其他地方可以使dialog消失，为false的话不会消失
+        dia.setCanceledOnTouchOutside(true); // Sets whether this dialog is
+        Window w = dia.getWindow();
+        WindowManager.LayoutParams lp = w.getAttributes();
+        lp.x = 0;
+        lp.y = 40;
+        dia.onWindowAttributesChanged(lp);
+    }
+    private void SendMsg_Picture(String send_number, String accept_number,String style,Bitmap bitmap)
+    {
+
+    }
+    //处理拍摄照片回调
+    @SuppressLint("Range")
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode,data);
+        Log.d(TAG, "requestCode"+requestCode);
+        if(data==null)
+        {
+            Toast.makeText(Chat_Activity.this,"没有选中文件",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(paishe)
+        {
+
+        }
+        switch (requestCode){
+            //拍照得到图片
+            case TAKE_PHOTO:
+                Log.d(TAG, "拍照获得图片");
+                if(resultCode == RESULT_OK){
+                    try {
+                        //将拍摄的图片展示并更新数据库
+                        imageUri=data.getData();
+                        Bitmap bitmap = BitmapFactory.decodeStream((getContentResolver().openInputStream(imageUri)));
+                        showDialog(this,bitmap);
+                    }catch (FileNotFoundException e){
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            //从相册中选择图片
+            case FROM_ALBUMS:
+                Log.d(TAG, "相册获得图片");
+                if(resultCode == RESULT_OK){
+                    //判断手机版本号
+                    if(Build.VERSION.SDK_INT >= 19){
+                        imagePath =  photoUtils.handleImageOnKitKat(this, data);
+                    }else {
+                        imagePath = photoUtils.handleImageBeforeKitKat(this, data);
+                    }
+                }
+                if(imagePath != null){
+                    //将拍摄的图片展示并更新数据库
+                    Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                    showDialog(this,bitmap);
+                }else{
+                    Log.d("QQ","没有找到图片");
+                }
+                break;
+            default:
+                Log.d(TAG, "其他文件");
+                Uri uri=data.getData();
+                ContentResolver resolver=this.getContentResolver();
+                Cursor cursor=resolver.query(uri,null,null,null,null);
+                if(cursor==null)
+                {
+                    Log.d(TAG, "直接获取路径");
+                    file_paht=uri.getPath();
+                }
+                if(cursor.moveToFirst())
+                {
+                    file_paht=cursor.getString(cursor.getColumnIndex("_data"));
+                }
+                cursor.close();
+                Log.d(TAG, "文件路径："+file_paht);
+                break;
+        }
+    }
+    @Override
+    public void onClick(View v) {
+        int id=v.getId();
+        xiangce=false;
+        wenjian=false;
+        paishe=false;
+        switch (id)
+        {
+            case R.id.iv_send:
+                String content=inputText.getText().toString();
+                if(!"".equals(content))
+                {
+                    //添加入数据库
+                    SendMsg(loginUser.getAccount(),friend_account,content, String.valueOf(1));
+                    //将消息对象显示在页面
+                    Msg msg=new Msg(content,Msg.TYPE_SENT);
+                    msgList.add(msg);
+                    adapter.notifyItemInserted(msgList.size()-1);//当有新消息时，刷新ListView中的显示
+                    msgRecyclerView.scrollToPosition(msgList.size()-1);//将ListView定位到最后一行
+                    inputText.setText("");
+                }
+                break;
+            case R.id.iv_expand:
+                Log.d(TAG, "onClick: 点击扩展");
+                if(ll_expend.getVisibility()== View.VISIBLE)
+                {
+                    ll_expend.setVisibility(View.GONE);
+                }
+                else
+                {
+                    ll_expend.setVisibility(View.VISIBLE);
+                }
+                break;
+            case R.id.ll_xiangce:
+                xiangce=true;
+                Log.d(TAG, "点击相册");
+                //申请权限
+                if(ContextCompat.checkSelfPermission(Chat_Activity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(Chat_Activity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+                }else {
+                    //打开相册
+                    Intent intent = new Intent("android.intent.action.GET_CONTENT");
+                    intent.setType("image/*");
+                    startActivityForResult(intent, FROM_ALBUMS);
+                }
+            case R.id.ll_wenjian:
+                wenjian=true;
+                Log.d(TAG, "点击文件：");
+                pickFile();
+        }
+    }
+    // 打开系统的文件选择器
+    public void pickFile() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        this.startActivityForResult(intent, 1);
     }
 }

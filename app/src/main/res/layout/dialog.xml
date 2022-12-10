@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal|center_vertical|center"
+    >
+
+    <ImageView
+        android:id="@+id/ivdialog"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_centerVertical="true" />
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/ivdialog"
+        android:gravity="center_horizontal|center_vertical|center"
+        >
+        <TextView
+            android:id="@+id/tv_send"
+            android:textColor="@color/black"
+            android:background="@color/gray"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|center_vertical|center"
+            android:text="发送"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            />
+        <TextView
+            android:id="@+id/tv_cancel"
+            android:textColor="@color/black"
+            android:background="@color/gray"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|center_vertical|center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="取消"
+            />
+    </LinearLayout>
+</RelativeLayout>

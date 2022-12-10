@@ -6,35 +6,88 @@
     android:padding="10dp"
     >
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/left_layout"
+        android:id="@+id/ll_left"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="left"
-        android:background="@drawable/qipao_white_1"
-        android:orientation="horizontal">
-        <TextView
+        android:layout_marginTop="10dp"
+        android:gravity="left"
+        >
+        <com.example.qq.widget.RoundImageView
+            android:id="@+id/ri_portrait_left"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/padding_left_and_right"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/default_header"/>
+        <!--文字-->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/left_msg"
-            android:layout_gravity="center"
-            android:layout_margin="10dp">
-        </TextView>
+            android:id="@+id/left_layout"
+            android:visibility="visible"
+            android:background="@drawable/qipao_white_1"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/left_msg"
+                android:layout_gravity="center"
+                android:layout_margin="10dp">
+            </TextView>
+        </LinearLayout>
+        <!--图片-->
+        <ImageView
+            android:id="@+id/iv_left"
+            android:layout_marginLeft="10dp"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/right_layout"
-        android:layout_gravity="right"
-        android:background="@drawable/qipao_2"
+        android:id="@+id/ll_right"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="right"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/right_msg"
-            android:layout_gravity="center"
-            android:layout_margin="10dp">
-        </TextView>
+            android:id="@+id/right_layout"
+            android:background="@drawable/qipao_2"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/right_msg"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                >
+            </TextView>
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/iv_right"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            />
+        <com.example.qq.widget.RoundImageView
+            android:id="@+id/ri_portrait_right"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/padding_left_and_right"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/default_header"/>
     </LinearLayout>
+
 
 </LinearLayout>

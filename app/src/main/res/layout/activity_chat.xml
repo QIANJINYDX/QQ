@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#d8e0e8"
+    android:background="#ededed"
     tools:context=".activity.Chat_Activity">
     <!--    标题栏-->
     <com.example.qq.widget.TitleLayout
@@ -21,23 +21,173 @@
     </androidx.recyclerview.widget.RecyclerView>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="请在这里输入文字"
-            android:maxLines="2"
-            android:id="@+id/input_text">
-        </EditText>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/Darkgreen"
-            android:id="@+id/send"
-            android:text="发送">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#f7f7f7"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal|center_vertical|center"
+            android:layout_height="60dp">
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/yuyin"/>
+            <EditText
+                android:id="@+id/input_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="请在这里输入文字"
+                android:background="@drawable/shape_10dp_corners"
+                android:maxLines="2"
+                android:minHeight="48dp"/>
+            <ImageView
+                android:id="@+id/iv_Expressions"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/xiaolian"/>
+            <ImageView
+                android:id="@+id/iv_expand"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/jiahao"
+                android:visibility="visible"
+                />
+            <ImageView
+                android:id="@+id/iv_send"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/fasong"
+                android:visibility="gone"
+                />
+        </LinearLayout>
 
-        </Button>
+        <LinearLayout
+            android:id="@+id/ll_expend"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="horizontal"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center|center_vertical|center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/ll_xiangce"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/shape_20dp_corners"
+                    android:gravity="center|center_vertical|center_horizontal">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:gravity="center_horizontal"
+                        android:src="@drawable/xiangce" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal|center_vertical|center"
+                    android:text="相册" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center|center_vertical|center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/ll_wenjian"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/shape_20dp_corners"
+                    android:gravity="center|center_vertical|center_horizontal">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:gravity="center_horizontal"
+                        android:src="@drawable/wenjian2" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal|center_vertical|center"
+                    android:text="文件" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center|center_vertical|center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/ll_paishe"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/shape_20dp_corners"
+                    android:gravity="center|center_vertical|center_horizontal">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:gravity="center_horizontal"
+                        android:src="@drawable/paishe" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal|center_vertical|center"
+                    android:text="拍摄" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center|center_vertical|center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/ll_weizhi"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/shape_20dp_corners"
+                    android:gravity="center|center_vertical|center_horizontal">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:gravity="center_horizontal"
+                        android:src="@drawable/weizhi" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal|center_vertical|center"
+                    android:text="位置" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
     </LinearLayout>
 
 </LinearLayout>

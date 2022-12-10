@@ -25,19 +25,23 @@ public class TitleLayout extends LinearLayout {
         iv_backward = (ImageView) bar_title.findViewById(R.id.iv_backward);
         tv_title = (TextView) bar_title.findViewById(R.id.tv_title);
         tv_forward = (TextView) bar_title.findViewById(R.id.tv_forward);
-        if(ActivityCollector.getCurrentActivity().getClass().equals(PersonInfo.class)){
-            tv_forward.setText("保存");
-            tv_title.setText("编辑资料");
-        }
-        if(ActivityCollector.getCurrentActivity().getClass().equals(webview_activity.class)){
-            tv_forward.setText("");
-            tv_title.setText("外部网页");
-        }
-        if(ActivityCollector.getCurrentActivity().getClass().equals(AddPeople_Activity.class))
+        if(!isInEditMode())
         {
-            tv_forward.setText("");
-            tv_title.setText("添加好友");
+            if(ActivityCollector.getCurrentActivity().getClass().equals(PersonInfo.class)){
+                tv_forward.setText("保存");
+                tv_title.setText("编辑资料");
+            }
+            if(ActivityCollector.getCurrentActivity().getClass().equals(webview_activity.class)){
+                tv_forward.setText("");
+                tv_title.setText("外部网页");
+            }
+            if(ActivityCollector.getCurrentActivity().getClass().equals(AddPeople_Activity.class))
+            {
+                tv_forward.setText("");
+                tv_title.setText("添加好友");
+            }
         }
+
         //设置监听器
         //如果点击back则结束活动
         iv_backward.setOnClickListener(new OnClickListener() {
