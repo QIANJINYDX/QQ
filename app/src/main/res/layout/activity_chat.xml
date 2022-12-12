@@ -71,6 +71,7 @@
             android:layout_marginRight="10dp"
             android:gravity="center_vertical|center_horizontal"
             android:orientation="horizontal"
+            android:splitMotionEvents="false"
             tools:visibility="visible">
 
             <LinearLayout

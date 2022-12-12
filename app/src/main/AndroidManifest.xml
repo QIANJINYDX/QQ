@@ -12,6 +12,8 @@
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
 
     <application
         android:name="org.litepal.LitePalApplication"
@@ -71,6 +73,7 @@
         </activity>
 
         <service android:name=".Service.MusicService" />
+        <service android:name=".Service.DownloadService" />
 
         <activity
             android:name=".activity.SoundActivity"

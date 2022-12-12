@@ -110,10 +110,10 @@ public class Contact_Fragment extends Fragment implements View.OnClickListener {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String ans=response.body().string();
-                Log.d(TAG, "ans:"+ans);
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
+                    String ans=response.body().string();
+                    Log.d(TAG, "ans:"+ans);
                     JSONArray jsonArray=new JSONArray(ans);
                     Log.d(TAG, "JsonArray"+jsonArray);
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -129,7 +129,13 @@ public class Contact_Fragment extends Fragment implements View.OnClickListener {
                     msg.what = 1;
                     uiHandler.sendMessage(msg);
                 } catch (JSONException e) {
+                    Log.d(TAG, "请求体报错");
                     e.printStackTrace();
+                }
+                catch (Exception ignored)
+                {
+                    Log.d(TAG, "客户端请求失败！重新请求！");
+                    FindFriend(loginUser.getAccount());
                 }
             }
         });

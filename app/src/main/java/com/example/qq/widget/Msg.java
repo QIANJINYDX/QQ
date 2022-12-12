@@ -3,6 +3,8 @@ package com.example.qq.widget;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import java.io.File;
+
 public class Msg {
     public static final int TYPE_RECEIVED=0;
     public static final int TYPE_SENT=1;
@@ -11,7 +13,9 @@ public class Msg {
     private int style;
     private Bitmap bitmap;
     private String img_path;
+    private String file_path;
     private Uri uri;
+    private File file;
     public Msg(String content,int type)
     {
         this.content=content;
@@ -19,6 +23,22 @@ public class Msg {
     }
 
     public Msg() {
+    }
+
+    public String getFile_path() {
+        return file_path;
+    }
+
+    public void setFile_path(String file_path) {
+        this.file_path = file_path;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 
     public Bitmap getBitmap() {
