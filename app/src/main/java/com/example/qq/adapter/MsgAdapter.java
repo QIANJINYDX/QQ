@@ -70,6 +70,11 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>imple
         ImageView iv_right;
         TextView leftMsg;
         TextView rightMsg;
+        //位置相关
+        LinearLayout ll_right_weizhi;
+        LinearLayout ll_left_weizhi;
+        TextView tv_left_loc_address;
+        TextView tv_right_loc_address;
         public ViewHolder(@NonNull View view) {
             super(view);
             ll_left=view.findViewById(R.id.ll_left);
@@ -88,6 +93,12 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>imple
             ll_right_wenjian_txt=view.findViewById(R.id.ll_right_wenjian_txt);
             ll_right_expend=view.findViewById(R.id.ll_right_expend);
             ll_left_expend=view.findViewById(R.id.ll_left_expend);
+
+            ll_right_weizhi=view.findViewById(R.id.ll_right_weizhi);
+            ll_left_weizhi=view.findViewById(R.id.ll_left_weizhi);
+            tv_left_loc_address=view.findViewById(R.id.tv_left_loc_address);
+            tv_right_loc_address=view.findViewById(R.id.tv_right_loc_address);
+
         }
     }
     public MsgAdapter(List<Msg> msgList)
@@ -119,13 +130,16 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>imple
                 holder.ll_txt_left.setVisibility(View.VISIBLE);//文本可见
                 holder.iv_left.setVisibility(View.GONE);//图片不可见
                 holder.ll_left_wenjian.setVisibility(View.GONE);//文件不可见
+                holder.ll_left_weizhi.setVisibility(View.GONE);//位置不可见
             }
             else if(msg.getStyle()==2)
             {
-                holder.iv_left.setImageURI(msg.getUri());//设置图片
+                if(msg.getUri()!=null) holder.iv_left.setImageURI(msg.getUri());//设置图片
+                if(msg.getBitmap()!=null) holder.iv_left.setImageBitmap(msg.getBitmap());//设置图片
                 holder.ll_txt_left.setVisibility(View.GONE);//文本不可见
                 holder.iv_left.setVisibility(View.VISIBLE);//图片可见
                 holder.ll_left_wenjian.setVisibility(View.GONE);//文件不可见
+                holder.ll_left_weizhi.setVisibility(View.GONE);//位置不可见
             }
             else if(msg.getStyle()==3)
             {
@@ -134,6 +148,15 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>imple
                 holder.ll_left_wenjian.setVisibility(View.VISIBLE);//文件可见
                 holder.ll_txt_left.setVisibility(View.GONE);//文本不可见
                 holder.iv_left.setVisibility(View.GONE);//图片不可见
+                holder.ll_left_weizhi.setVisibility(View.GONE);//位置不可见
+            }
+            else if(msg.getStyle()==Msg.STYLE_WEIZHI)
+            {
+                holder.ll_left_wenjian.setVisibility(View.GONE);//文件可见
+                holder.ll_txt_left.setVisibility(View.GONE);//文本不可见
+                holder.iv_left.setVisibility(View.GONE);//图片不可见
+                holder.ll_left_weizhi.setVisibility(View.VISIBLE);//位置可见
+                holder.tv_left_loc_address.setText(msg.getContent());
             }
             holder.ll_right.setVisibility(View.GONE);
             holder.leftMsg.setText(msg.getContent());
@@ -146,13 +169,16 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>imple
                 holder.ll_txt_right.setVisibility(View.VISIBLE);
                 holder.iv_right.setVisibility(View.GONE);
                 holder.ll_right_wenjian.setVisibility(View.GONE);//文件不可见
+                holder.ll_right_weizhi.setVisibility(View.GONE);//位置不可见
             }
             else if(msg.getStyle()==2)
             {
-                holder.iv_right.setImageURI(msg.getUri());
+                if(msg.getUri()!=null) holder.iv_right.setImageURI(msg.getUri());
+                if(msg.getBitmap()!=null) holder.iv_right.setImageBitmap(msg.getBitmap());
                 holder.ll_txt_right.setVisibility(View.GONE);
                 holder.iv_right.setVisibility(View.VISIBLE);
                 holder.ll_right_wenjian.setVisibility(View.GONE);//文件不可见
+                holder.ll_right_weizhi.setVisibility(View.GONE);//位置不可见
             }
             else if(msg.getStyle()==3)
             {
@@ -161,6 +187,15 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>imple
                 holder.ll_right_wenjian.setVisibility(View.VISIBLE);//文件可见
                 holder.ll_txt_right.setVisibility(View.GONE);//文本不可见
                 holder.iv_right.setVisibility(View.GONE);//图片不可见
+                holder.ll_right_weizhi.setVisibility(View.GONE);//位置不可见
+            }
+            else if(msg.getStyle()==Msg.STYLE_WEIZHI)
+            {
+                holder.ll_right_wenjian.setVisibility(View.GONE);//文件不可见
+                holder.ll_txt_right.setVisibility(View.GONE);//文本不可见
+                holder.iv_right.setVisibility(View.GONE);//图片不可见
+                holder.ll_right_weizhi.setVisibility(View.VISIBLE);//位置可见
+                holder.tv_right_loc_address.setText(msg.getContent());
             }
             holder.ll_left.setVisibility(View.GONE);
             holder.rightMsg.setText(msg.getContent());

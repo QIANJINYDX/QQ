@@ -3,7 +3,15 @@ package com.example.qq.activity;
 import static android.os.Environment.DIRECTORY_DCIM;
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
 import static android.os.Environment.DIRECTORY_PICTURES;
+import static com.example.qq.Application.MyApplication.RESULT_CODE_SEND_FILE;
+import static com.example.qq.Application.MyApplication.RESULT_CODE_SEND_IMAGE_PAISHE;
+import static com.example.qq.Application.MyApplication.RESULT_CODE_SEND_IMAGE_XIANGCE;
+import static com.example.qq.Application.MyApplication.RESULT_CODE_SEND_LOCATION;
 import static com.example.qq.util.JudgeURL.judge;
+import static com.example.qq.widget.Msg.STYLE_IMG;
+import static com.example.qq.widget.Msg.STYLE_TXT;
+import static com.example.qq.widget.Msg.STYLE_WEIZHI;
+import static com.example.qq.widget.Msg.TYPE_SENT;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -59,6 +67,9 @@ import com.example.qq.util.ImageUpload;
 import com.example.qq.util.KeyboardChangeListener;
 import com.example.qq.util.PhotoUtils;
 import com.example.qq.util.RecyclerViewOnItemLongClickListener;
+import com.example.qq.util.StorageType;
+import com.example.qq.util.StorageUtil;
+import com.example.qq.util.StringUtil;
 import com.example.qq.widget.Msg;
 import com.example.qq.adapter.MsgAdapter;
 import com.example.qq.R;
@@ -77,6 +88,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import cn.jpush.im.android.api.content.LocationContent;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -96,6 +108,7 @@ public class Chat_Activity extends Base_Activity implements View.OnClickListener
     private LoginUser loginUser = LoginUser.getInstance();
     private static final int TAKE_PHOTO = 1;
     private static final int FROM_ALBUMS = 2;
+    public static final String JPG = ".jpg";
     private Uri imageUri;  //拍照功能的地址
     private PhotoUtils photoUtils = new PhotoUtils();
     private String imagePath;  //从相册中选的地址
@@ -289,13 +302,14 @@ public class Chat_Activity extends Base_Activity implements View.OnClickListener
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         msgRecyclerView.setLayoutManager(layoutManager);
         adapter=new MsgAdapter(msgList);
+        //item点击事件
         adapter.setOnItemClickListener(new MsgAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Log.d(TAG, "消息被点击了"+position);
+                Log.d(TAG, "消息被点击了"+msgList.get(position).toString());
                 //获取消息内容，判断消息中是否包含网页
                 //是文本类型消息
-                if (msgList.get(position).getStyle()==1)
+                if (msgList.get(position).getStyle()==STYLE_TXT)
                 {
                     String connect=msgList.get(position).getContent();
                     if(judge(connect))
@@ -305,8 +319,17 @@ public class Chat_Activity extends Base_Activity implements View.OnClickListener
                         startActivity(intent);
                     }
                 }
+                else if(msgList.get(position).getStyle()==STYLE_WEIZHI)
+                {
+                    //进入查看位置列表
+                    Intent intent = new Intent(Chat_Activity.this, MapPickerActivity.class);
+                    intent.putExtra("latitude", msgList.get(position).getLatitude());
+                    intent.putExtra("longitude", msgList.get(position).getLongitude());
+                    intent.putExtra("locDesc", msgList.get(position).getContent());
+                    intent.putExtra("sendLocation", false);
+                    Chat_Activity.this.startActivity(intent);
+                }
             }
-
             @Override
             public void onItemLongClick(View view, int position) {
                 int msgtype=msgList.get(position).getType();
@@ -485,8 +508,7 @@ public class Chat_Activity extends Base_Activity implements View.OnClickListener
         ActivityCollector.removeActivity(this);
         unbindService(connection);
     }
-    private void getMsg(String my_account,String friend_account)
-    {
+    private void getMsg(String my_account,String friend_account) {
         RequestBody formBody = new FormBody.Builder()
                 .add("my_account", my_account)
                 .add("friend_account", friend_account)
@@ -525,6 +547,13 @@ public class Chat_Activity extends Base_Activity implements View.OnClickListener
                                 msg.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.excel));
                             }
                         }
+                        else if(style.equals("4"))
+                        {
+                            msg.setStyle(STYLE_WEIZHI);
+                            msg.setLongitude(jsonObject.getDouble("longitude"));
+                            msg.setLatitude(jsonObject.getDouble("latitude"));
+                            msg.setContent(jsonObject.getString("address"));
+                        }
                         msg.setStyle(Integer.parseInt(style));
                         msgList.add(msg);
                     }
@@ -553,8 +582,7 @@ public class Chat_Activity extends Base_Activity implements View.OnClickListener
             }
         });
     }
-    private void SendMsg(String send_number, String accept_number, String content,String style)
-    {
+    private void SendMsg(String send_number, String accept_number, String content,String style) {
         RequestBody formBody = new FormBody.Builder()
                 .add("send_number", send_number)
                 .add("style", style)
@@ -592,9 +620,6 @@ public class Chat_Activity extends Base_Activity implements View.OnClickListener
     /*
      * 弹出图片
      */
-
-
-
     private void showDialog(Context context, Bitmap bitmap){
         Dialog dia = new Dialog(context, R.style.edit_AlertDialog_style);
         dia.setContentView(R.layout.dialog);
@@ -608,7 +633,7 @@ public class Chat_Activity extends Base_Activity implements View.OnClickListener
                 dia.cancel();
                 Log.d(TAG, "onClick: "+"发送文件");
                 Msg msg=new Msg();
-                msg.setStyle(2);
+                msg.setStyle(STYLE_IMG);
                 msg.setBitmap(bitmap);
                 Log.d(TAG, "onClick: "+bitmap);
                 msg.setType(Msg.TYPE_SENT);
@@ -654,16 +679,11 @@ public class Chat_Activity extends Base_Activity implements View.OnClickListener
         lp.y = 40;
         dia.onWindowAttributesChanged(lp);
     }
-    private void SendMsg_Picture(String send_number, String accept_number,String style,Bitmap bitmap)
-    {
-
-    }
     private String getfilestyle(String name)
     {
         return name.split("\\.")[1];
     }
-    private void showDialog_file(Context context, String file_name,File file)
-    {
+    private void showDialog_file(Context context, String file_name,File file) {
         Dialog dia = new Dialog(context, R.style.edit_AlertDialog_style);
         dia.setContentView(R.layout.dialog_file);
         ImageView iv_fileimg = (ImageView) dia.findViewById(R.id.iv_fileimg);
@@ -723,18 +743,39 @@ public class Chat_Activity extends Base_Activity implements View.OnClickListener
 
     }
     //处理拍摄照片回调
-    @SuppressLint("Range")
+    @SuppressLint({"Range", "NotifyDataSetChanged"})
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode,data);
-
         Log.d(TAG, "requestCode"+requestCode);
+        Log.d(TAG, "resultCode"+resultCode);
         if(data==null)
         {
-            Toast.makeText(Chat_Activity.this,"没有选中文件",Toast.LENGTH_SHORT).show();
+            Toast.makeText(Chat_Activity.this,"没有选择",Toast.LENGTH_SHORT).show();
             return;
         }
-        if(paishe)
+        if(requestCode==RESULT_CODE_SEND_LOCATION)
+        {
+            //处理地图
+            double latitude = data.getDoubleExtra("latitude", 0);
+            double longitude = data.getDoubleExtra("longitude", 0);
+            int mapview = data.getIntExtra("mapview", 0);
+            String address = data.getStringExtra("address");
+            String path = data.getStringExtra("path");
+            Msg msg=new Msg();
+            msg.setLatitude(latitude);
+            msg.setLongitude(longitude);
+            msg.setContent(address);
+            msg.setFile_path(path);
+            msg.setStyle(STYLE_WEIZHI);
+            msg.setType(TYPE_SENT);
+            msgList.add(msg);
+            adapter.notifyDataSetChanged();
+            //位置信息上传到数据库中.
+            SendMsg_weizhi(loginUser.getAccount(),friend_account,latitude,longitude,address);
+
+        }
+        else if (requestCode==RESULT_CODE_SEND_IMAGE_PAISHE)
         {
             Log.d(TAG, "拍照获得图片");
             if(resultCode == RESULT_OK){
@@ -748,26 +789,32 @@ public class Chat_Activity extends Base_Activity implements View.OnClickListener
                 }
             }
         }
-        if(xiangce)
+        else if(requestCode==RESULT_CODE_SEND_IMAGE_XIANGCE)
         {
             Log.d(TAG, "相册获得图片");
-            if(resultCode == RESULT_OK){
-                //判断手机版本号
-                if(Build.VERSION.SDK_INT >= 19){
+            int y=1;
+            if(y==1)
+            {
+                //使用方法1
+                if(resultCode == RESULT_OK){
+                    //判断手机版本号
                     imagePath =  photoUtils.handleImageOnKitKat(this, data);
-                }else {
-                    imagePath = photoUtils.handleImageBeforeKitKat(this, data);
+                }
+                if(imagePath != null){
+                    //将拍摄的图片展示并更新数据库
+                    Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                    showDialog(this,bitmap);
+                }else{
+                    Log.d("QQ","没有找到图片");
                 }
             }
-            if(imagePath != null){
-                //将拍摄的图片展示并更新数据库
-                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-                showDialog(this,bitmap);
-            }else{
-                Log.d("QQ","没有找到图片");
+            else if(y==2)
+            {
+
             }
+
         }
-        if(wenjian)
+        else if(requestCode==RESULT_CODE_SEND_FILE)
         {
             Log.d(TAG, "其他文件");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -776,9 +823,33 @@ public class Chat_Activity extends Base_Activity implements View.OnClickListener
                 showDialog_file(this,res.getName(),res);
             }
             Log.d(TAG, "文件选择完毕");
-
         }
     }
+
+    private void SendMsg_weizhi(String account, String friend_account, double latitude, double longitude, String address) {
+        RequestBody formBody = new FormBody.Builder()
+                .add("send_number", account)
+                .add("style", String.valueOf(STYLE_WEIZHI))
+                .add("accept_number", friend_account)
+                .add("latitude", String.valueOf(latitude))
+                .add("longitude", String.valueOf(longitude))
+                .add("address", address)
+                .build();
+        HttpUtil.sendOkHttpRequestPost("http://116.62.110.5:5000/SendMsg_weizhi", formBody, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String ans=response.body().string();
+                Log.d(TAG, "成功上传位置信息！");
+            }
+        });
+    }
+
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         int id=v.getId();
@@ -813,30 +884,59 @@ public class Chat_Activity extends Base_Activity implements View.OnClickListener
                 }
                 break;
             case R.id.ll_xiangce:
-                xiangce=true;
+                int y=2;
                 Log.d(TAG, "点击相册");
-                //申请权限
-                if(ContextCompat.checkSelfPermission(Chat_Activity.this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(Chat_Activity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
-                }else {
-                    //打开相册
-                    Intent intent = new Intent("android.intent.action.GET_CONTENT");
-                    intent.setType("image/*");
-                    startActivityForResult(intent, FROM_ALBUMS);
+                if(y==1)
+                {
+                    //使用方法1
+                    //申请权限
+                    if(ContextCompat.checkSelfPermission(Chat_Activity.this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                        ActivityCompat.requestPermissions(Chat_Activity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+                    }else {
+                        //打开相册
+                        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+                        intent.setType("image/*");
+                        startActivityForResult(intent, RESULT_CODE_SEND_IMAGE_XIANGCE);
+                    }
                 }
+                else
+                {
+                    //使用方法2
+                }
+
+
+                break;
             case R.id.ll_wenjian:
                 wenjian=true;
                 Log.d(TAG, "点击文件：");
                 pickFile();
+                break;
+            case R.id.ll_weizhi:
+                Log.d(TAG, "点击位置");
+                if (ContextCompat.checkSelfPermission(Chat_Activity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(Chat_Activity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+                    Toast.makeText(this, "请在应用管理中打开“位置”访问权限！", Toast.LENGTH_LONG).show();
+                } else {
+                    intent = new Intent(this, MapPickerActivity.class);
+                    intent.putExtra("sendLocation", true);
+                    startActivityForResult(intent,RESULT_CODE_SEND_LOCATION);
+                }
+                break;
+
         }
+    }
+    private String tempFile() {
+        String filename = StringUtil.get32UUID() + JPG;
+        return StorageUtil.getWritePath(filename, StorageType.TYPE_TEMP);
     }
     // 打开系统的文件选择器
     public void pickFile() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/*");
-        this.startActivityForResult(intent, 1);
+        this.startActivityForResult(intent, RESULT_CODE_SEND_FILE);
     }
     //将uri对应的文件复制一份到私有目录，之后就可以操作复制后的File了
     @RequiresApi(Build.VERSION_CODES.Q)

@@ -2,6 +2,7 @@ package com.example.qq.Fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -20,12 +21,15 @@ import com.example.qq.db.LoginUser;
 import com.example.qq.util.PhotoUtils;
 import com.example.qq.widget.RoundImageView;
 
+import java.io.InputStream;
+
 public class Me_Fragment extends Fragment implements View.OnClickListener{
     private ImageView setting;
     private LinearLayout info;
     private TextView info_name,info_account;
     private RoundImageView portrait;
     private LoginUser loginUser = LoginUser.getInstance();
+    private final PhotoUtils photoUtils = new PhotoUtils();
     public Me_Fragment() {
         // Required empty public constructor
     }
@@ -83,6 +87,14 @@ public class Me_Fragment extends Fragment implements View.OnClickListener{
     }
     private void initInfo(){
         info_name.setText(loginUser.getName());
-        portrait.setImageBitmap((new PhotoUtils()).byte2bitmap(loginUser.getPortrait()));
+        if(loginUser.getPortrait()==null)
+        {
+            @SuppressLint("ResourceType") InputStream is = getResources().openRawResource(R.mipmap.default_header);
+            portrait.setImageBitmap(BitmapFactory.decodeStream(is));
+        }
+        else
+        {
+            portrait.setImageBitmap(photoUtils.byte2bitmap(loginUser.getPortrait()));
+        }
     }
 }

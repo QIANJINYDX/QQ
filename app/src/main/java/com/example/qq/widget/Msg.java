@@ -3,11 +3,17 @@ package com.example.qq.widget;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
 import java.io.File;
 
 public class Msg {
     public static final int TYPE_RECEIVED=0;
     public static final int TYPE_SENT=1;
+    public static final int STYLE_TXT=1;
+    public static final int STYLE_IMG=2;
+    public static final int STYLE_FILE=3;
+    public static final int STYLE_WEIZHI=4;
     private String content;
     private int type;
     private int style;
@@ -16,6 +22,8 @@ public class Msg {
     private String file_path;
     private Uri uri;
     private File file;
+    double latitude;
+    double longitude;
     public Msg(String content,int type)
     {
         this.content=content;
@@ -23,6 +31,39 @@ public class Msg {
     }
 
     public Msg() {
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Msg{" +
+                "content='" + content + '\'' +
+                ", type=" + type +
+                ", style=" + style +
+                ", bitmap=" + bitmap +
+                ", img_path='" + img_path + '\'' +
+                ", file_path='" + file_path + '\'' +
+                ", uri=" + uri +
+                ", file=" + file +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public String getFile_path() {

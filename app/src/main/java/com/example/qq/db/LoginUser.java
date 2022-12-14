@@ -80,6 +80,7 @@ public class LoginUser extends Application {
         login_user.region = user.getRegion();
         login_user.gender = user.getGender();
         login_user.brithday = user.getBrithday();
+        login_user.phone=user.getPhone();
         return true;
     }
 

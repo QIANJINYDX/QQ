@@ -97,10 +97,7 @@ public class PersonInfo extends AppCompatActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_person_info);
-
-
         initOptionData();
-
         ig_id = (ItemGroup)findViewById(R.id.ig_id);
         ig_name = (ItemGroup)findViewById(R.id.ig_name);
         ig_gender = (ItemGroup)findViewById(R.id.ig_gender);
@@ -125,7 +122,6 @@ public class PersonInfo extends AppCompatActivity implements View.OnClickListene
                 finish();
             }
         });
-
         initInfo();
     }
 
@@ -261,9 +257,18 @@ public class PersonInfo extends AppCompatActivity implements View.OnClickListene
     //从数据库中初始化数据并展示
     private void initInfo(){
         LoginUser loginUser = LoginUser.getInstance();
-        ig_id.getContentEdt().setText(String.valueOf(loginUser.getId()));  //ID是int，转string
+        ig_id.getContentEdt().setText(loginUser.getAccount());  //ID是int，转string
         ig_name.getContentEdt().setText(loginUser.getName());
-        ri_portrati.setImageBitmap(photoUtils.byte2bitmap(loginUser.getPortrait()));
+        Log.d("TAG", loginUser.toString());
+        if(loginUser.getPortrait()==null)
+        {
+            @SuppressLint("ResourceType") InputStream is = getResources().openRawResource(R.mipmap.default_header);
+            ri_portrati.setImageBitmap(BitmapFactory.decodeStream(is));
+        }
+        else
+        {
+            ri_portrati.setImageBitmap(photoUtils.byte2bitmap(loginUser.getPortrait()));
+        }
         ig_gender.getContentEdt().setText(loginUser.getGender());
         ig_region.getContentEdt().setText(loginUser.getRegion());
         ig_brithday.getContentEdt().setText(loginUser.getBrithday());

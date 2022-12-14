@@ -27,6 +27,7 @@
     <color name="assist_blue_down">#3489ff</color>
     <color name="assist_green">#6ae068</color>
     <color name="assist_yellow">#fcce0b</color>
+    <color name="transparent">#00000000</color>
 
     <color name="gray0">#464646</color>
     <color name="gray1">#7e7e7e</color>
@@ -72,4 +73,7 @@
 
     <!--    图标的颜色-->
     <color name="menu_icon">#FF000000</color>
+    <color name="picker_list_divider">#dadada</color>
+
+    <color name="picker_map_nearby_divider">@color/picker_list_divider</color>
 </resources>

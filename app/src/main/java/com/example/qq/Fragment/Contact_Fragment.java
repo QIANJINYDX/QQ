@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -36,6 +38,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -58,6 +61,7 @@ public class Contact_Fragment extends Fragment implements View.OnClickListener {
     private RoundImageView riv;
     private TextView tv_title, tv_fun;
     private LoginUser loginUser = LoginUser.getInstance();
+    private DrawerLayout drawerLayout;
     public Contact_Fragment() {
         // Required empty public constructor
     }
@@ -149,6 +153,8 @@ public class Contact_Fragment extends Fragment implements View.OnClickListener {
         LinearLayout maintitle=view.findViewById(R.id.mtl_title);
         tv_title=maintitle.findViewById(R.id.tv_title);
         tv_fun=maintitle.findViewById(R.id.tv_fun);
+        riv=maintitle.findViewById(R.id.ri_portrait);
+        drawerLayout= requireActivity().findViewById(R.id.drawer_layout);
         tv_title.setText("联系人");
         tv_fun.setText("添加");
         tv_fun.setOnClickListener(new View.OnClickListener() {
@@ -176,6 +182,12 @@ public class Contact_Fragment extends Fragment implements View.OnClickListener {
                 intent.putExtra("account",concater.getNumber());
                 intent.putExtra("name",concater.getName());
                 startActivity(intent);
+            }
+        });
+        riv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
 

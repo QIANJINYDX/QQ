@@ -2,9 +2,11 @@ package com.example.qq.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,6 +36,7 @@ public class webview_activity extends AppCompatActivity {
     private TitleLayout titleLayout;
     private TextView tv_title;
     private String title="";
+    SwipeRefreshLayout swipeRefreshLayout;
     private final Handler uiHandler=new Handler()
     {
         @SuppressLint("HandlerLeak")
@@ -58,6 +61,27 @@ public class webview_activity extends AppCompatActivity {
         WebView webView=(WebView) findViewById(R.id.web_view);
         titleLayout=findViewById(R.id.tl_title);
         tv_title=titleLayout.findViewById(R.id.tv_title);
+        swipeRefreshLayout=findViewById(R.id.swipe);
+        //第二步，设置 下拉刷新时的颜色
+        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#ff0000"),Color.parseColor("#00ff00"));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //判断是否在刷新
+                Toast.makeText(webview_activity.this,swipeRefreshLayout.isRefreshing()?"正在刷新":"刷新完成"
+                        ,Toast.LENGTH_SHORT).show();
+                webView.getSettings().setJavaScriptEnabled(true);
+                webView.setWebViewClient(new WebViewClient());
+                webView.loadUrl(getIntent().getStringExtra("url"));
+                getConnect(getIntent().getStringExtra("url"));
+                swipeRefreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                },3000);
+            }
+        });
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(getIntent().getStringExtra("url"));

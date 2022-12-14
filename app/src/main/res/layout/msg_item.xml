@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:padding="10dp"
     >
+<!--    左边布局-->
     <LinearLayout
         android:id="@+id/ll_left"
         android:layout_width="match_parent"
@@ -72,6 +73,7 @@
                 android:text="我是文件名.excel"
                 android:textColor="@color/white"/>
         </LinearLayout>
+<!--        消息选择-->
         <LinearLayout
             android:id="@+id/ll_left_expend"
             android:layout_width="wrap_content"
@@ -114,6 +116,56 @@
                 android:gravity="center_horizontal|center_vertical|center"
                 android:textColor="@color/white"
                 android:text="取消"/>
+        </LinearLayout>
+<!--        位置信息-->
+        <LinearLayout
+            android:id="@+id/ll_left_weizhi"
+            android:layout_width="200dp"
+            android:layout_height="95dp"
+            android:visibility="gone"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/assist_blue"
+                android:layout_marginLeft="5dp">
+
+                <ImageView
+                    android:id="@+id/iv_map"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@mipmap/ic_msg_map"
+                    android:layout_margin="5dp"/>
+
+                <TextView
+                    android:gravity="center_vertical"
+                    android:id="@+id/tv_left_loc_address"
+                    android:layout_toRightOf="@+id/iv_map"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="20dp"
+                    android:maxWidth="150dp"
+                    android:textSize="16sp"
+                    android:autoSizeMinTextSize="5dp"
+                    android:maxLines="2"
+                    android:text="内蒙古自治区巴彦淖尔市"
+                    android:autoSizeTextType="uniform"
+                    android:textColor="@color/black"/>
+                <TextView
+                    android:id="@+id/tv_show_loc"
+                    android:layout_toRightOf="@+id/iv_map"
+                    android:gravity="center_vertical"
+                    android:layout_below="@+id/tv_loc_address"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_height="20dp"
+                    android:minHeight="40dp"
+                    android:textSize="14sp"
+                    android:text="【点击查看地址】"
+                    android:textColor="@color/white"/>
+            </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
 
@@ -217,6 +269,56 @@
                 android:layout_height="50dp"
                 android:src="@drawable/excel"
                 />
+        </LinearLayout>
+        <!--        位置信息-->
+        <LinearLayout
+            android:id="@+id/ll_right_weizhi"
+            android:layout_width="200dp"
+            android:layout_height="95dp"
+            android:visibility="gone"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/assist_blue"
+                android:layout_marginLeft="5dp">
+
+                <ImageView
+                    android:id="@+id/iv_left_map"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@mipmap/ic_msg_map"
+                    android:layout_margin="5dp"/>
+
+                <TextView
+                    android:autoSizeMinTextSize="5dp"
+                    android:gravity="center_vertical"
+                    android:id="@+id/tv_right_loc_address"
+                    android:layout_width="wrap_content"
+                    android:layout_toRightOf="@+id/iv_left_map"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="40dp"
+                    android:maxWidth="150dp"
+                    android:textSize="16sp"
+                    android:autoSizeTextType="uniform"
+                    android:maxLines="2"
+                    android:text="内蒙古自治区巴彦淖尔市区巴彦"
+                    android:textColor="@color/black"/>
+                <TextView
+                    android:id="@+id/tv_right_show_loc"
+                    android:gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_toRightOf="@+id/iv_left_map"
+                    android:layout_below="@+id/tv_right_loc_address"
+                    android:layout_marginLeft="5dp"
+                    android:layout_height="20dp"
+                    android:minHeight="40dp"
+                    android:textSize="14sp"
+                    android:text="【点击查看地址】"
+                    android:textColor="@color/white"/>
+            </RelativeLayout>
         </LinearLayout>
         <com.example.qq.widget.RoundImageView
             android:id="@+id/ri_portrait_right"

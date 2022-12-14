@@ -34,6 +34,7 @@ import com.example.qq.R;
 import com.example.qq.activity.SoundActivity;
 import com.example.qq.activity.VideoActivity;
 import com.example.qq.activity.Chat_Activity;
+import com.example.qq.activity.test_Activity;
 import com.example.qq.activity.webview_activity;
 import com.example.qq.db.DBUtils;
 import com.example.qq.db.LoginUser;
@@ -262,7 +263,8 @@ public class ChatList_Fragment extends Fragment {
         btn_TestMySQL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent=new Intent(getActivity(), test_Activity.class);
+                startActivity(intent);
             }
         });
 

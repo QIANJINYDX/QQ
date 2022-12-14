@@ -22,4 +22,5 @@
 
     <!--消息框的上下margin-->
     <dimen name="message_padding">3dp</dimen>
+    <dimen name="location">300dp</dimen>
 </resources>
